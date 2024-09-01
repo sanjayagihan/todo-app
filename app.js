@@ -29,9 +29,24 @@ const Task = mongoose.model('Task', taskSchema);
 // Create a new task
 app.post('/tasks', async (req, res) => {
     try {
+        // Extract id and title from the request body
+        const { id, title } = req.body;
+
+        // Ensure id and title are provided
+        if (!id || !title) {
+            return res.status(400).json({ message: 'id and title are required' });
+        }
+
+        // Check if a task with the provided id already exists
+        const existingTask = await Task.findOne({ id: id });
+        if (existingTask) {
+            return res.status(400).json({ message: 'Task with this id already exists' });
+        }
+
+        // Create and save the new task
         const newTask = new Task({
-            id: uuidv4(), // Generate a unique id for each task
-            title: req.body.title
+            id: id, // Use the id provided in the request body
+            title: title
         });
         const savedTask = await newTask.save();
         res.status(201).json(savedTask);
@@ -39,6 +54,7 @@ app.post('/tasks', async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
 
 // Read all tasks
 app.get('/tasks', async (req, res) => {
