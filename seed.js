@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Task = require("./models"); // Ensure this path is correct
 
-const mongoURI = "mongodb://mongodb:27017/todo-list-app"; // Update as needed for your MongoDB setup
+const mongoURI = "mongodb://mongodb:27017/todo-app"; // Update as needed for your MongoDB setup
 
 async function seedDB() {
   try {
