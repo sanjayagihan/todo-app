@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid'); // Import uuid for generating unique IDs
 const app = express();
 const port = 3000;
 
@@ -18,6 +19,7 @@ mongoose.connect('mongodb://mongodb:27017/todo-app', {
 
 // Define Task schema and model
 const taskSchema = new mongoose.Schema({
+    id: { type: String, required: true, unique: true }, // Adding an 'id' field
     title: { type: String, required: true },
     completed: { type: Boolean, default: false }
 });
@@ -28,6 +30,7 @@ const Task = mongoose.model('Task', taskSchema);
 app.post('/tasks', async (req, res) => {
     try {
         const newTask = new Task({
+            id: uuidv4(), // Generate a unique id for each task
             title: req.body.title
         });
         const savedTask = await newTask.save();
@@ -50,7 +53,7 @@ app.get('/tasks', async (req, res) => {
 // Read a specific task by id
 app.get('/tasks/:id', async (req, res) => {
     try {
-        const task = await Task.findById(req.params.id);
+        const task = await Task.findOne({ id: req.params.id }); // Find by custom 'id'
         if (task) {
             res.json(task);
         } else {
@@ -64,7 +67,7 @@ app.get('/tasks/:id', async (req, res) => {
 // Update a task by id
 app.put('/tasks/:id', async (req, res) => {
     try {
-        const task = await Task.findById(req.params.id);
+        const task = await Task.findOne({ id: req.params.id }); // Find by custom 'id'
         if (task) {
             task.title = req.body.title !== undefined ? req.body.title : task.title;
             task.completed = req.body.completed !== undefined ? req.body.completed : task.completed;
@@ -81,7 +84,7 @@ app.put('/tasks/:id', async (req, res) => {
 // Delete a task by id
 app.delete('/tasks/:id', async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id);
+        const task = await Task.findOneAndDelete({ id: req.params.id }); // Find and delete by custom 'id'
         if (task) {
             res.status(204).send(); // No content response
         } else {

@@ -49,7 +49,7 @@ jobs:
         run: |
           response=$(curl -s -w "\n%{http_code}" -X POST http://localhost:3000/tasks \
           -H "Content-Type: application/json" \
-          -d '{"title": "Finish the project", "completed": false}')
+          -d '{"title": "Finish the project", "completed": false, "id": 1}')
           body=$(echo "$response" | head -n -1)  # Extract the body (everything except the last line)
           status_code=$(echo "$response" | tail -n 1)  # Extract the status code (the last line)
           
