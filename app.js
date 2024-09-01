@@ -102,7 +102,7 @@ app.delete('/tasks/:id', async (req, res) => {
     try {
         const task = await Task.findOneAndDelete({ id: req.params.id }); // Find and delete by custom 'id'
         if (task) {
-            res.status(204).send(); // No content response
+            res.status(200).send();
         } else {
             res.status(404).json({ message: 'Task not found' });
         }
